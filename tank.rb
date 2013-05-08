@@ -7,6 +7,8 @@ class Tank
     @window, @player, @x, @y, @angle, @points = window, player, x, y, angle, points
     @vel_x = @vel_y = 0.0
     @color = color
+    @shoot_timer = Time.now
+    @shoot_toggle = false
   end
 
   def warp_to(x, y, angle=nil)
@@ -14,12 +16,21 @@ class Tank
     @angle = angle if angle
   end
 
-  def turn_left
-    @angle -= 4.5
+  def go_up
+    @angle = 0
   end
 
-  def turn_right
-    @angle += 4.5
+  def go_down
+    @angle = 180
+  end
+
+  def go_left
+    @angle = -90
+  end
+
+  def go_right
+    #@angle += 4.5
+    @angle = 90
   end
 
   def accelerate
@@ -34,9 +45,14 @@ class Tank
     @vel_y *= 0.6
   end
 
+  def shoot_toggle(is_shooting)
+    @shoot_toggle = is_shooting
+  end
+
   def shoot
-    if alive?
+    if alive? and @shoot_toggle and Time.now - @shoot_timer >= 1
       shot = Shot.new(@window, @player, @x, @y, @angle.to_f)
+      @shoot_timer = Time.now
       @window.add_shot shot
     end
   end
@@ -46,12 +62,12 @@ class Tank
   end
 
   def hit_wall?(map)
-    return true if map.solid?(self.x - 16, self.y - 16) or  
-    map.solid?(self.x + 16, self.y - 16) or 
-    map.solid?(self.x - 16, self.y + 16) or  
-    map.solid?(self.x + 16, self.y + 16) 
-       
-    return false   
+    return true if map.solid?(self.x - 16, self.y - 16) or
+    map.solid?(self.x + 16, self.y - 16) or
+    map.solid?(self.x - 16, self.y + 16) or
+    map.solid?(self.x + 16, self.y + 16)
+
+    return false
   end
 
   def collide_with?(left, top, right, bottom)
@@ -71,7 +87,7 @@ class Tank
   end
 
   def outside_battlefield?
-    self.x - 16 < 0 or self.x + 16 > WIDTH or self.y - 16 < 0 or self.y + 16 > HEIGHT    
+    self.x - 16 < 0 or self.x + 16 > WIDTH or self.y - 16 < 0 or self.y + 16 > HEIGHT
   end
 
 end
