@@ -35,12 +35,12 @@ class GameWindow < Window
 
   attr_reader :spritesheet, :player, :map, :client
 
-  def initialize(player, color)
+  def initialize(server, port, player, color)
     super(WIDTH, HEIGHT, false)
     self.caption = NAME
     @spritesheet = Image.load_tiles(self, SPRITESHEET, 33, 33, true)    
     @map = Map.new(self, MAPFILE)  # map representing the movable area
-    @client = Client.new(SERVER, PORT) # client that communicates with the server
+    @client = Client.new(server, port) # client that communicates with the server
 
     @player = player # player name
     @font = Font.new(self, 'Courier New', 20)  # for the player names    
@@ -188,7 +188,6 @@ class GameWindow < Window
     draw_error_message if $error_message
     @other_shots.each_value {|shot| shot.draw}
     @other_tanks.each {|id, tank| tank.draw}
-
     @explosions.each {|exp| 
       exp.draw 
       add_to_messages('del', exp.uuid, 'explosion',  SpriteImage::Explosion, @player, exp.x, exp.y, 0.0)
@@ -221,5 +220,9 @@ class GameWindow < Window
   end
 end
 
-game = GameWindow.new(PLAYER_NAME, PLAYER_COLOR)
+server = ARGV[0] || SERVER
+port = ARGV[1] || PORT
+player = ARGV[2] || PLAYER_NAME
+color = ARGV[3] || PLAYER_COLOR
+game = GameWindow.new(server, port, player, color)
 game.show
