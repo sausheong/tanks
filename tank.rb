@@ -1,19 +1,23 @@
 class Tank
-  attr_reader :uuid, :player, :sprite_image, :x, :y, :angle, :points, :color
+  attr_reader :uuid, :sprite_image, :player, :x, :y, :angle, :points, :color
+
+  def self.from_sprite(window, sprite)
+    Tank.new(window, sprite[2], sprite[3], sprite[4], sprite[5], sprite[6], sprite[7], sprite[8], sprite[0])
+  end
 
   def initialize(window, sprite_image, player, x, y, angle=0.0, points=10, color=0xffffffff, uuid=SecureRandom.uuid)
     @uuid = uuid
-    @sprite_image = sprite_image
-    @window, @player, @x, @y, @angle, @points = window, player, x, y, angle, points
+    @sprite_image = sprite_image.to_i
+    @window, @player, @x, @y, @angle, @points, @color = window, player, x.to_f, y.to_f, angle.to_f, points.to_i, color.to_i
     @vel_x = @vel_y = 0.0
-    @color = color
+
     @shoot_timer = Time.now
     @shoot_toggle = false
   end
 
   def warp_to(x, y, angle=nil)
-    @x, @y = x, y
-    @angle = angle if angle
+    @x, @y = x.to_f, y.to_f
+    @angle = angle.to_f if angle
   end
 
   def go_up
@@ -51,7 +55,7 @@ class Tank
 
   def shoot
     if alive? and @shoot_toggle and Time.now - @shoot_timer >= 1
-      shot = Shot.new(@window, @player, @x, @y, @angle.to_f)
+      shot = Shot.new(@window,SpriteImage::Bullet, @player, @x, @y, @angle.to_f)
       @shoot_timer = Time.now
       @window.add_shot shot
     end

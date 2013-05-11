@@ -8,8 +8,8 @@ class Arena
   def initialize(host, port)
     puts "Starting Arena."
     @server = TCPServer.new(host, port)
-    @store = Store.new
-    @pointer = Pointer.new(@store)
+    @sprites = Store.new
+    @user_sprites = Pointer.new(@sprites)
     async.run
   end
 
@@ -23,57 +23,47 @@ class Arena
 
   def handle_connection(socket)
     _, port, host = socket.peeraddr
-    puts "#{host}:#{port} has joined the arena."
+    user = "#{host}:#{port}"
+    puts "#{user} has joined the arena."
     loop do
-      json = socket.readpartial(4096)
-      if json and !json.empty?
+      data = socket.readpartial(4096)
+      data_array = data.split("\n")
+      if data_array and !data_array.empty?
         begin
-          messages = JSON.parse(json)
-          messages.each do |message|
-
-            data = message['data']
-            case message['type']
+          data_array.each do |row|
+            message = row.split("|")
+            case message[0] # first item in message is the action, rest is the sprite
             when 'obj'
-              sprite = @store.get data['uuid']
-              if sprite.nil?
-                sprite = Sprite.new *data.values
-
-                @pointer.tag sprite, data['type']
-                @pointer.tag sprite, "#{host}:#{port}"
-              else
-                %w(x y angle ).each do |prop|
-                  sprite[prop] = data[prop]
-                end
-
-                if sprite['type'] == 'tank' and sprite['points'] > data['points']
-                  sprite['points'] = data['points']
-                end
-              end            
+              @sprites.add(message[1], message[1..9])
+              @user_sprites.tag(message[1], user)
+              
             when 'del'
-              @store.remove data['uuid']
+              @sprites.remove message[1]
+              @user_sprites.detag(message[1], user)
             end
-            response = {}
-            %w(tank shot explosion).each do |type|
-              json_array = @pointer.get(type).map do |sprite|
-                sprite.to_json if sprite
+
+            response = String.new
+            @user_sprites.tags.each do |tag|
+              @user_sprites.get(tag).each do |obj|
+                if obj
+                  response << obj.join("|") << "\n"
+                end
               end
-              response[type] = json_array.compact.to_json 
-            end        
-            socket.write response.to_json          
-          
+            end
+            socket.write response          
           end
         rescue
-
+          p $!
         end
-      end # end json
+      end # end data
       
     end # end loop
 
   rescue EOFError => err
-    puts "#{host}:#{port} has left the arena."
-    sprite = @pointer.get("#{host}:#{port}").first
-    puts "Removing #{sprite['player']} from arena."
-    @store.remove sprite['uuid']
+    puts "#{user} has left the arena."
+    sprite = @user_sprites.get("#{host}:#{port}").first
+    puts "Removing #{sprite[3]} from arena."
+    @sprites.remove(sprite[0])
     socket.close
   end
 end

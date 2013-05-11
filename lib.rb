@@ -1,22 +1,9 @@
 require 'set'
 require 'securerandom'
 
-class Message
-  attr :type, :data
-  def initialize(type, data=nil)
-    @type = type  # obj or del
-    @data = data # missle object
-  end
-
-  def to_json(*a)
-    {type: @type, data: @data.to_json}.to_json(*a)
-  end
-  
-end
-
-Sprite = Struct.new(:uuid, :type, :sprite, :player, :x, :y, :angle, :points, :color) do 
-  def to_json(*a)
-    Hash[self.each_pair.to_a]
+Sprite = Struct.new(:uuid, :type, :sprite_image, :player, :x, :y, :angle, :points, :color) do 
+  def to_msg
+    to_a.join("|")
   end  
 end
 
@@ -26,9 +13,8 @@ class Store < Hash
     self[uuid]
   end
   
-  def add(obj)
-    self[obj.uuid] = obj
-    obj.uuid
+  def add(uuid, obj)
+    self[uuid] = obj
   end
   
   def remove(uuid)
@@ -47,21 +33,23 @@ class Pointer < Hash
     @store = store
   end
   
-  def tag(obj, tag)
+  def tag(uuid, tag)
     if self[tag].nil?
       self[tag] = Set.new
     end
-    uuid = @store.add(obj)
     self[tag].add(uuid)
   end
   
-  def detag(obj, tag)
-    uuid = @store.identify(obj)
+  def detag(uuid, tag)
     self[tag].delete(uuid)
-    @store.remove(uuid)
   end
   
   def get(tag)
     @store.values_at(*self[tag])
   end
+  
+  def tags
+    self.keys
+  end
+  
 end

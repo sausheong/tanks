@@ -21,8 +21,8 @@ class Client
     end
   end
 
-  def send_message(json)
-    @socket.write(json) if @socket
+  def send_message(message)
+    @socket.write(message) if @socket
   end
 
   def read_message
@@ -62,15 +62,15 @@ class GameWindow < Window
     @explosions = []
 
     @messages = [] # list of messages to send to the server at the end of each round
+
     # send message to let server know that this player has signed in
     add_to_messages('obj', @me.uuid, 'tank', @me.sprite_image, @player, @me.x, @me.y, @me.angle, @me.points, color)
-
     @explosions = []
   end
 
   def add_to_messages(message_type, uuid, sprite_type, sprite_image, player_name, x, y, angle, points=nil, color=nil)
-    sprite = Sprite.new(uuid, sprite_type, sprite_image, player_name, x, y, angle, points, color)
-    @messages << Message.new(message_type, sprite)
+    message = "#{message_type}|#{uuid}|#{sprite_type}|#{sprite_image}|#{player_name}|#{x}|#{y}|#{angle}|#{points}|#{color}"
+    @messages << message
   end
 
   def add_shot(shot)
@@ -108,11 +108,8 @@ class GameWindow < Window
   end
 
   def update
-
     move_tank
-
     @me.shoot
-
     px, py = @me.x, @me.y
     @me.move
 
@@ -142,7 +139,7 @@ class GameWindow < Window
           remove_shot(shot)
           hit_tank(player)
           unless tank.alive?
-            exp = Explosion.new(self, tank.x, tank.y)
+            exp = Explosion.new(self, SpriteImage::Explosion, tank.x, tank.y)
             @explosions << exp
             add_to_messages('obj', exp.uuid, 'explosion',  SpriteImage::Explosion, @player, exp.x, exp.y, 0.0)
           end
@@ -153,47 +150,49 @@ class GameWindow < Window
     end
 
     # send collected messages to the server
-    @client.send_message @messages.to_json
+    @client.send_message @messages.join("\n")
     @messages.clear
-
     begin
       msg = @client.read_message
-      data = JSON.parse msg
+      data = msg.split("\n")
+      # create sprites or alter existing sprites from messages from the server
+      data.each do |row|
+        sprite = row.split("|")
 
-      tank_json = JSON.parse(data['tank'])
-      tank_json.each do |tankdata|
-        player = tankdata['player']
-        unless player  == @player
-          if @other_tanks[player]
-            @other_tanks[player].points = tankdata['points']
-            @other_tanks[player].warp_to(tankdata['x'], tankdata['y'], tankdata['angle'])
+        player = sprite[3]
+        case sprite[1]          
+        when 'tank'          
+          unless player == @player                        
+            if @other_tanks[player]
+               @other_tanks[player].points = sprite[7].to_i
+               @other_tanks[player].warp_to(sprite[4], sprite[5], sprite[6])
+            else
+              @other_tanks[player] = Tank.from_sprite(self, sprite)
+            end
           else
-            @other_tanks[player] = Tank.new(self, tankdata['sprite'], player, tankdata['x'], tankdata['y'], tankdata['angle'], tankdata['points'], tankdata['color'], tankdata['uuid'])
+            @me.points = sprite[7].to_i
           end
-        else
-          @me.points = tankdata['points']
+          
+        when 'shot'
+          unless player == @player
+            if @other_shots[player]
+              @other_shots[player].warp_to(sprite[4], sprite[5], sprite[6])                
+            else
+              @other_shots[player] = Shot.from_sprite(self, sprite)
+            end
+          end
+        when 'explosion'
+          @explosions << Explosion.from_sprite(self, sprite)
         end
       end
 
-      shot_json = JSON.parse(data['shot'])
-      shot_json.each do |shotdata|
-        player = shotdata['player']
-        unless player == @player
-          if @other_shots[player]
-            @other_shots[player].x, @other_shots[player].y, @other_shots[player].angle =  shotdata['x'], shotdata['y'], shotdata['angle']
-          else
-            @other_shots[player] = Shot.new(self, player, shotdata['x'], shotdata['y'], shotdata['angle'])
-          end
-        end
+      # remove sprites not in the messages from the server
+      @other_tanks.values.each do |tank|
+        # tank.uuid = 
       end
-
-      explosion_json = JSON.parse(data['explosion'])
-      explosion_json.each do |expdata|
-        @explosions << Explosion.new(self, expdata['x'], expdata['y'])
-      end
-
 
     rescue Exception => e
+      p $!
     end
 
   end

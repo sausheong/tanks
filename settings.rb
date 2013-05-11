@@ -17,7 +17,10 @@ DEFAULT_HIT_POINTS = 10
 
 NAME        = "Tanks!"
 
-SERVER      = '0.0.0.0'
+# SERVER      = '202.156.154.13'
+#SERVER = '192.168.1.110'
+# SERVER = '58.185.193.188'
+SERVER = '0.0.0.0'
 PORT        = 1234
 
 require 'randexp'
