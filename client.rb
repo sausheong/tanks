@@ -28,11 +28,9 @@ class Client
   def read_message
     @socket.readpartial(4096) if @socket
   end
-
 end
 
 class GameWindow < Window
-
   attr_reader :spritesheet, :player, :map, :client
 
   def initialize(server, port, player, color)
@@ -54,145 +52,131 @@ class GameWindow < Window
     @players = [] # list of all player names
 
     @me = Tank.new(self, SpriteImage::Tank, player, px, py, 0.0, DEFAULT_HIT_POINTS, color) # create tank representing the player
-    @my_shots = [] # a list of my shots
+    @me_shots = [] # a list of my shots
 
     @other_tanks = {} # hash of player names => tank objects (other than myself)
-    @other_shots = {} # a hash of player names => shot objects in an array (other than mine)
-
-    @explosions = []
-
+    @other_shots = {} # a hash of player names => shot objects in a hash (other than mine)
+    
     @messages = [] # list of messages to send to the server at the end of each round
 
     # send message to let server know that this player has signed in
-    add_to_messages('obj', @me.uuid, 'tank', @me.sprite_image, @player, @me.x, @me.y, @me.angle, @me.points, color)
-    @explosions = []
+    add_to_message_queue('obj', @me)
+    @server_sprite_uuids = []
+    
   end
-
-  def add_to_messages(message_type, uuid, sprite_type, sprite_image, player_name, x, y, angle, points=nil, color=nil)
-    message = "#{message_type}|#{uuid}|#{sprite_type}|#{sprite_image}|#{player_name}|#{x}|#{y}|#{angle}|#{points}|#{color}"
-    @messages << message
+  
+  # add a message to the queue to send to the server
+  def add_to_message_queue(msg_type, obj)
+    @messages << "#{msg_type}|#{obj.uuid}|#{obj.type}|#{obj.sprite_image}|#{obj.player}|#{obj.x}|#{obj.y}|#{obj.angle}|#{obj.points}|#{obj.color}"
   end
 
   def add_shot(shot)
-    @my_shots << shot
-    add_to_messages('obj', shot.uuid, 'shot', SpriteImage::Bullet,  @player, @me.x, @me.y, @me.angle)
-  end
-
-  def remove_shot(shot)
-    @my_shots.delete shot
-    add_to_messages('del', shot.uuid, 'shot', SpriteImage::Bullet, @player, @me.x, @me.y, @me.angle)
-  end
-
-  def hit_tank(player)
-    tank = @other_tanks[player]
-    tank.hit if tank.alive?
-    add_to_messages('obj', tank.uuid, 'tank', tank.sprite_image, tank.player, tank.x, tank.y, tank.angle, tank.points, tank.color)
+    @me_shots << shot
+    add_to_message_queue('obj', shot)
   end
 
   def move_tank
-    accelerate = false
-    if button_down? KbLeft
-      @me.go_left
-      accelerate = true
-    elsif button_down? KbRight
-      @me.go_right
-      accelerate = true
-    elsif button_down? KbUp
-      @me.go_up
-      accelerate = true
-    elsif button_down? KbDown
-      @me.go_down
-      accelerate = true
-    end
-    @me.accelerate if accelerate
+    @me.go(:left) and @me.accelerate and return if button_down? KbLeft
+    @me.go(:right) and @me.accelerate and return if button_down? KbRight      
+    @me.go(:up) and @me.accelerate and return if button_down? KbUp
+    @me.go(:down) and @me.accelerate and return if button_down? KbDown    
   end
 
   def update
-    move_tank
-    @me.shoot
-    px, py = @me.x, @me.y
-    @me.move
-
-    # don't hit the wall or go outside of the battlefield
-    if @me.hit_wall?(@map) or @me.outside_battlefield?
-      @me.warp_to(px, py)
-    end
-
-    # don't hit another tank
-    @other_tanks.each do |player, tank|
-      if tank.alive?
-        if @me.collide_with?(tank.x, tank.y, tank.x+32, tank.y+32)
-          @me.warp_to(px, py)
-        end
-      end
-    end
-
-    # tell the server that the player has moved
-    add_to_messages('obj', @me.uuid, 'tank', @me.sprite_image, @player, @me.x, @me.y, @me.angle, @me.points, @me.color)
-
-    # move my shots and what happens when they move
-    @my_shots.each do |shot|
-      shot.update # move the bullet
-      # when my bullet hits a tank
-      @other_tanks.each do |player, tank|
-        if tank.collide_with?(shot.x, shot.y, shot.x+16, shot.y+16)
-          remove_shot(shot)
-          hit_tank(player)
-          unless tank.alive?
-            exp = Explosion.new(self, SpriteImage::Explosion, tank.x, tank.y)
-            @explosions << exp
-            add_to_messages('obj', exp.uuid, 'explosion',  SpriteImage::Explosion, @player, exp.x, exp.y, 0.0)
-          end
-        end
-      end
-      # tell the server the bullet has moved
-      add_to_messages('obj', shot.uuid, 'shot',  SpriteImage::Bullet, @player, shot.x, shot.y, shot.angle)
-    end
-
-    # send collected messages to the server
-    @client.send_message @messages.join("\n")
-    @messages.clear
     begin
-      msg = @client.read_message
-      data = msg.split("\n")
-      # create sprites or alter existing sprites from messages from the server
-      data.each do |row|
-        sprite = row.split("|")
+      # move the tank but store the previous location    
+      move_tank
+      px, py = @me.x, @me.y
+      @me.move
 
-        player = sprite[3]
-        case sprite[1]          
-        when 'tank'          
-          unless player == @player                        
-            if @other_tanks[player]
-               @other_tanks[player].points = sprite[7].to_i
-               @other_tanks[player].warp_to(sprite[4], sprite[5], sprite[6])
-            else
-              @other_tanks[player] = Tank.from_sprite(self, sprite)
-            end
-          else
-            @me.points = sprite[7].to_i
-          end
-          
-        when 'shot'
-          unless player == @player
-            if @other_shots[player]
-              @other_shots[player].warp_to(sprite[4], sprite[5], sprite[6])                
-            else
-              @other_shots[player] = Shot.from_sprite(self, sprite)
+      # don't overlap the wall or go outside of the battlefield
+      @me.warp_to(px, py) if @me.hit_wall? or @me.outside_battlefield?
+
+      # don't overlap another tank
+      @other_tanks.each do |player, tank|
+        @me.warp_to(px, py) if tank.alive? and @me.collide_with?(tank, 30)
+      end
+
+      # tell the server that the player has moved
+      add_to_message_queue('obj', @me)    
+
+      # move other people's shots, see if it hits me
+      @other_shots.each do |player, shots|
+        if @me.alive? 
+          shots.each_value do |shot|
+            if @me.collide_with?(shot, 16)
+              @me.hit       
+              add_to_message_queue('obj', @me)     
             end
           end
-        when 'explosion'
-          @explosions << Explosion.from_sprite(self, sprite)
+        end          
+      end
+      
+      # move my shots and what happens when they move
+      @me_shots.each do |shot|
+        shot.update # move the bullet
+        if shot.hit_wall? or shot.outside_battlefield?
+          @me_shots.delete shot
+          add_to_message_queue('del', shot)
+        else
+          add_to_message_queue('obj', shot)
         end
       end
 
-      # remove sprites not in the messages from the server
-      @other_tanks.values.each do |tank|
-        # tank.uuid = 
-      end
+      # send collected messages to the server
+      @client.send_message @messages.join("\n")
+      @messages.clear
 
+      # read messages from the server
+      if msg = @client.read_message
+        @server_sprite_uuids.clear
+        data = msg.split("\n")
+        # create sprites or alter existing sprites from messages from the server
+        data.each do |row|
+          sprite = row.split("|")
+          if sprite.size == 9
+            player = sprite[3]
+            @server_sprite_uuids << sprite[0]
+            case sprite[1]          
+            when 'tank' 
+              unless player == @player                        
+                if @other_tanks[player]
+                   @other_tanks[player].points = sprite[7].to_i
+                   @other_tanks[player].warp_to(sprite[4], sprite[5], sprite[6])
+                else
+                  @other_tanks[player] = Tank.from_sprite(self, sprite)
+                end
+              else
+                @me.points = sprite[7].to_i
+              end
+          
+            when 'shot'
+              unless player == @player
+                if !@other_shots[player]
+                  @other_shots[player] = Hash.new
+                end
+                shot = Shot.from_sprite(self, sprite)
+                @other_shots[player][shot.uuid] = shot
+                shot.warp_to(sprite[4], sprite[5], sprite[6])                
+              end
+            end
+          end # end check for sprite size
+        end
+
+        # remove other sprites not coming from the server
+        @other_shots.each_value do |shots|
+          shots.delete_if do |uuid, shot|
+            !@server_sprite_uuids.include?(uuid)
+          end
+        end
+
+        @other_tanks.delete_if do |user, tank|
+          !@server_sprite_uuids.include?(tank.uuid)
+        end
+
+      end
     rescue Exception => e
-      p $!
+      puts e.backtrace
     end
 
   end
@@ -200,21 +184,18 @@ class GameWindow < Window
   def draw
     @map.draw
     @me.draw
-    @my_shots.each {|shot| shot.draw}
+    @me_shots.each {|shot| shot.draw}
     draw_player_names
     draw_you_lose unless @me.alive?
     draw_error_message if $error_message
-    @other_shots.each_value {|shot| shot.draw}
-    @other_tanks.each {|id, tank| tank.draw}
-    @explosions.each {|exp| 
-      exp.draw 
-      add_to_messages('del', exp.uuid, 'explosion',  SpriteImage::Explosion, @player, exp.x, exp.y, 0.0)
-    }
-    @explosions.clear
+    @other_tanks.each_value {|tank| tank.draw}
+    @other_shots.each_value do|shots| 
+      shots.each_value {|shot| shot.draw}
+    end
   end
 
   def button_down(id)
-    @me.shoot_toggle(button_down? KbSpace)
+    @me.shoot if button_down? KbSpace
     close if id == KbEscape
   end
 
@@ -234,7 +215,7 @@ class GameWindow < Window
   end
 
   def random_position
-    [rand(WIDTH), rand(HEIGHT)]
+    [rand(32..WIDTH-32), rand(32..HEIGHT-32)]
   end
 end
 

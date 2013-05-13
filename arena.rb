@@ -1,5 +1,4 @@
 require 'celluloid/io'
-require 'json'
 require './lib'
 
 class Arena
@@ -25,40 +24,41 @@ class Arena
     _, port, host = socket.peeraddr
     user = "#{host}:#{port}"
     puts "#{user} has joined the arena."
+
     loop do
+
       data = socket.readpartial(4096)
       data_array = data.split("\n")
       if data_array and !data_array.empty?
         begin
-          data_array.each do |row|
+          
+          data_array.each do |row|            
             message = row.split("|")
-            case message[0] # first item in message is the action, rest is the sprite
-            when 'obj'
-              @sprites.add(message[1], message[1..9])
-              @user_sprites.tag(message[1], user)
+            if message.size == 10
+              case message[0] # first item in message is the action, rest is the sprite
+              when 'obj'
+                @sprites.add(message[1], message[1..9])
+                @user_sprites.tag(message[1], user)
               
-            when 'del'
-              @sprites.remove message[1]
-              @user_sprites.detag(message[1], user)
+              when 'del'
+                @sprites.remove message[1]
+                @user_sprites.detag(message[1], user)
+              end
             end
-
             response = String.new
             @user_sprites.tags.each do |tag|
               @user_sprites.get(tag).each do |obj|
-                if obj
-                  response << obj.join("|") << "\n"
-                end
+                (response << obj.join("|") << "\n") if obj
               end
             end
             socket.write response          
+            
           end
         rescue
           p $!
         end
-      end # end data
-      
+      end # end data    
     end # end loop
-
   rescue EOFError => err
     puts "#{user} has left the arena."
     sprite = @user_sprites.get("#{host}:#{port}").first
