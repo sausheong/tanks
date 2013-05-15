@@ -1,14 +1,8 @@
 require 'set'
 require 'securerandom'
 
-Sprite = Struct.new(:uuid, :type, :sprite_image, :player, :x, :y, :angle, :points, :color) do 
-  def to_msg
-    to_a.join("|")
-  end  
-end
 
 class Store < Hash
-  
   def get(uuid)
     self[uuid]
   end
@@ -19,10 +13,6 @@ class Store < Hash
   
   def remove(uuid)
     self.delete(uuid)
-  end
-  
-  def identify(obj)
-    self.key(obj)
   end
 end
 
@@ -50,6 +40,5 @@ class Pointer < Hash
   
   def tags
     self.keys
-  end
-  
+  end  
 end

@@ -223,5 +223,5 @@ server = ARGV[0] || SERVER
 port = ARGV[1] || PORT
 player = ARGV[2] || PLAYER_NAME
 color = ARGV[3] || PLAYER_COLOR
-game = GameWindow.new(server, port, player, color)
+game = GameWindow.new(server, port.to_i, player, color)
 game.show

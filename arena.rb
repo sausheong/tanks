@@ -5,7 +5,7 @@ class Arena
   include Celluloid::IO
 
   def initialize(host, port)
-    puts "Starting Arena."
+    puts "Starting Tanks Arena at #{host}:#{port}."
     @server = TCPServer.new(host, port)
     @sprites = Store.new
     @user_sprites = Pointer.new(@sprites)
@@ -60,15 +60,15 @@ class Arena
       end # end data    
     end # end loop
   rescue EOFError => err
-    puts "#{user} has left the arena."
     sprite = @user_sprites.get("#{host}:#{port}").first
-    puts "Removing #{sprite[3]} from arena."
+    puts "#{sprite[3]} has left arena."
     @sprites.remove(sprite[0])
     socket.close
   end
 end
 
-supervisor = Arena.supervise("0.0.0.0", 1234)
+server, port = ARGV[0] || "0.0.0.0", ARGV[1] || 1234
+supervisor = Arena.supervise(server, port.to_i)
 trap("INT") do
   supervisor.terminate
   exit
