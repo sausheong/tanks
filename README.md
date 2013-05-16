@@ -12,15 +12,15 @@ Running Tanks! is simple:
 
     $ ruby ./client.rb  <server> <port> <player name> <tank color>
       
-   All the parameters are optional. By default, a random name is used, along with a random color. The default server IP is 0.0.0.0 and the default port is 1234.
-   
-   For tank colors, chose one of the following:
-   * red
-   * blue
-   * green
-   * yellow
-   * aqua
-   * fuchsia
+ All the parameters are optional. By default, a random name is used, along with a random color. The default server IP is 0.0.0.0 and the default port is 1234.
+ 
+ For tank colors, chose one of the following:
+ * red
+ * blue
+ * green
+ * yellow
+ * aqua
+ * fuchsia
    
    
 
