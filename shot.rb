@@ -14,7 +14,7 @@ class Shot
     @points, @color = 0, 0
   end
 
-  def update
+  def move
     @x += offset_x(@angle, 8)
     @y += offset_y(@angle, 8)
   end

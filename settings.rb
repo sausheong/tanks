@@ -8,21 +8,24 @@ module SpriteImage
   Wall = 59
   Bullet= 28
   Tank = 39
-  Explosion = 27
 end
 
+NAME        = "Tanks!"
 SPRITESHEET = "assets/spritesheet.png"
 MAPFILE     = "assets/map.txt"
 DEFAULT_HIT_POINTS = 10
 
-NAME        = "Tanks!"
+COLORS = {'red'     => Gosu::Color::RED,
+          'green'   => Gosu::Color::GREEN,
+          'blue'    => Gosu::Color::BLUE,
+          'yellow'  => Gosu::Color::YELLOW,
+          'aqua'    => Gosu::Color::AQUA,
+          'fuchsia' => Gosu::Color::FUCHSIA}
 
-# SERVER      = '202.156.154.13'
-SERVER = '192.168.1.149'
-# SERVER = '58.185.193.188'
-#SERVER = '0.0.0.0'
+
+SERVER = '0.0.0.0'
 PORT        = 1234
 
 require 'randexp'
 PLAYER_NAME = Randgen.first_name(length: 6)
-PLAYER_COLOR = 0xff000000 + rand(0xffffffff - 0xff000000)
+PLAYER_COLOR = COLORS.values[rand(COLORS.size)]

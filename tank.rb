@@ -14,7 +14,7 @@ class Tank
   def initialize(window, sprite_image, player, x, y, angle=0.0, points=10, color=0xffffffff, uuid=SecureRandom.uuid)
     @uuid = uuid
     @sprite_image = sprite_image.to_i
-    @window, @player, @x, @y, @angle, @points, @color = window, player, x.to_f, y.to_f, angle.to_f, points.to_i, color.to_i
+    @window, @player, @x, @y, @angle, @points, @color = window, player, x.to_f, y.to_f, angle.to_f, points.to_i, color
     @vel_x = @vel_y = 0.0
     @bang = Sample.new(window, "assets/bang.wav")
     @crash = Sample.new(window, "assets/crash.wav")

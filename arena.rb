@@ -26,7 +26,6 @@ class Arena
     puts "#{user} has joined the arena."
 
     loop do
-
       data = socket.readpartial(4096)
       data_array = data.split("\n")
       if data_array and !data_array.empty?
@@ -51,8 +50,7 @@ class Arena
                 (response << obj.join("|") << "\n") if obj
               end
             end
-            socket.write response          
-            
+            socket.write response                      
           end
         rescue
           p $!

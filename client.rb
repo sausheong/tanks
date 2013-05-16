@@ -1,6 +1,5 @@
 require 'gosu'
 require 'celluloid/io'
-require 'json'
 
 require './settings'
 require './lib'
@@ -54,14 +53,15 @@ class GameWindow < Window
     @me = Tank.new(self, SpriteImage::Tank, player, px, py, 0.0, DEFAULT_HIT_POINTS, color) # create tank representing the player
     @me_shots = [] # a list of my shots
 
-    @other_tanks = {} # hash of player names => tank objects (other than myself)
+    @other_tanks = {} # hash of player names => tank objects (other than me)
     @other_shots = {} # a hash of player names => shot objects in a hash (other than mine)
     
     @messages = [] # list of messages to send to the server at the end of each round
-
+    @valid_sprites = [] # list of valid sprite uuids from the server
+    
     # send message to let server know that this player has signed in
     add_to_message_queue('obj', @me)
-    @server_sprite_uuids = []
+
     
   end
   
@@ -114,7 +114,7 @@ class GameWindow < Window
       
       # move my shots and what happens when they move
       @me_shots.each do |shot|
-        shot.update # move the bullet
+        shot.move # move the bullet
         if shot.hit_wall? or shot.outside_battlefield?
           @me_shots.delete shot
           add_to_message_queue('del', shot)
@@ -129,14 +129,14 @@ class GameWindow < Window
 
       # read messages from the server
       if msg = @client.read_message
-        @server_sprite_uuids.clear
+        @valid_sprites.clear
         data = msg.split("\n")
         # create sprites or alter existing sprites from messages from the server
         data.each do |row|
           sprite = row.split("|")
           if sprite.size == 9
             player = sprite[3]
-            @server_sprite_uuids << sprite[0]
+            @valid_sprites << sprite[0]
             case sprite[1]          
             when 'tank' 
               unless player == @player                        
@@ -166,12 +166,12 @@ class GameWindow < Window
         # remove other sprites not coming from the server
         @other_shots.each_value do |shots|
           shots.delete_if do |uuid, shot|
-            !@server_sprite_uuids.include?(uuid)
+            !@valid_sprites.include?(uuid)
           end
         end
 
         @other_tanks.delete_if do |user, tank|
-          !@server_sprite_uuids.include?(tank.uuid)
+          !@valid_sprites.include?(tank.uuid)
         end
 
       end
@@ -222,6 +222,6 @@ end
 server = ARGV[0] || SERVER
 port = ARGV[1] || PORT
 player = ARGV[2] || PLAYER_NAME
-color = ARGV[3] || PLAYER_COLOR
+color = COLORS[ARGV[3]] || PLAYER_COLOR
 game = GameWindow.new(server, port.to_i, player, color)
 game.show
