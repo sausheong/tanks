@@ -1,5 +1,4 @@
 require 'celluloid/io'
-require './lib'
 
 class Arena
   include Celluloid::IO
@@ -7,8 +6,8 @@ class Arena
   def initialize(host, port)
     puts "Starting Tanks Arena at #{host}:#{port}."
     @server = TCPServer.new(host, port)
-    @sprites = Store.new
-    @user_sprites = Pointer.new(@sprites)
+    @sprites = Hash.new # all the sprites including tanks and bullets, key is sprite uuid
+    @players = Hash.new # the players in the game (ie the tanks), key is server:port
     async.run
   end
 
@@ -29,38 +28,33 @@ class Arena
       data = socket.readpartial(4096)
       data_array = data.split("\n")
       if data_array and !data_array.empty?
-        begin
-          
+        begin          
           data_array.each do |row|            
             message = row.split("|")
             if message.size == 10
-              case message[0] # first item in message is the action, rest is the sprite
+              case message[0] # first item in message tells us what to do, the rest is the sprite
               when 'obj'
-                @sprites.add(message[1], message[1..9])
-                @user_sprites.tag(message[1], user)
-              
+                @players[user] = message[1..9] unless @players[user]
+                @sprites[message[1]] = message[1..9]
               when 'del'
-                @sprites.remove message[1]
-                @user_sprites.detag(message[1], user)
+                @sprites.delete message[1]
               end
             end
             response = String.new
-            @user_sprites.tags.each do |tag|
-              @user_sprites.get(tag).each do |obj|
-                (response << obj.join("|") << "\n") if obj
-              end
+            @sprites.each_value do |sprite|
+              (response << sprite.join("|") << "\n") if sprite
             end
             socket.write response                      
           end
-        rescue
-          p $!
+        rescue Exception => exception
+          puts exception.backtrace
         end
       end # end data    
     end # end loop
   rescue EOFError => err
-    sprite = @user_sprites.get("#{host}:#{port}").first
-    puts "#{sprite[3]} has left arena."
-    @sprites.remove(sprite[0])
+    player = @players[user]
+    puts "#{player[3]} has left arena."
+    @sprites.delete player[0]
     socket.close
   end
 end
