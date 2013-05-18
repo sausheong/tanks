@@ -15,12 +15,10 @@ SPRITESHEET = "assets/spritesheet.png"
 MAPFILE     = "assets/map.txt"
 DEFAULT_HIT_POINTS = 10
 
-COLORS = {'red'     => Gosu::Color::RED.gl,
+COLORS = {'red'     => Gosu::Color::BLUE.gl,
           'green'   => Gosu::Color::GREEN.gl,
-          'blue'    => Gosu::Color::BLUE.gl,
-          'yellow'  => Gosu::Color::YELLOW.gl,
-          'aqua'    => Gosu::Color::AQUA.gl,
-          'fuchsia' => Gosu::Color::FUCHSIA.gl}
+          'blue'    => 0xff00060FF,
+          'purple'  => 0xff6000C3}
 
 
 SERVER = '0.0.0.0'

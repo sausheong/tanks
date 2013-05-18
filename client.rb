@@ -1,8 +1,8 @@
 require 'gosu'
 require 'celluloid/io'
 
+require 'securerandom'
 require './settings'
-require './lib'
 require './map'
 require './tank'
 require './shot'

@@ -32,9 +32,7 @@ Just do this:
  * red
  * blue
  * green
- * yellow
- * aqua
- * fuchsia
+ * purple
    
    
 
