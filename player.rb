@@ -165,7 +165,6 @@ class GameWindow < Window
     close if id == KbEscape
   end
 
-
   def spawn(player, color)
     # randomly assign a position to start
     px, py = *random_position
