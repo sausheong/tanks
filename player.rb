@@ -42,44 +42,17 @@ class GameWindow < Window
     @player = player # player name
     @font = Font.new(self, 'Courier New', 20)  # for the player names
 
-    # randomly assign a position to start
-    px, py = *random_position
-    while @map.solid?(px, py) do
-      px, py = *random_position
-    end
+    @me = spawn player, color    
+    @me_shots = Array.new # a list of my shots
 
-    @players = [] # list of all player names
-
-    @me = Tank.new(self, SpriteImage::Tank, player, px, py, 0.0, DEFAULT_HIT_POINTS, color) # create tank representing the player
-    @me_shots = [] # a list of my shots
-
-    @other_tanks = {} # hash of player names => tank objects (other than me)
-    @other_shots = {} # a hash of player names => shot objects in a hash (other than mine)
+    @other_tanks = Hash.new # hash of player names => tank objects (other than me)
+    @other_shots = Hash.new # a hash of shot objects (other than mine); in a hash to be unique
     
-    @messages = [] # list of messages to send to the server at the end of each round
-    @valid_sprites = [] # list of valid sprite uuids from the server
+    @messages = Array.new # list of messages to send to the server at the end of each round
+    @valid_sprites = Array.new # list of valid sprite uuids from the server
     
     # send message to let server know that this player has signed in
     add_to_message_queue('obj', @me)
-
-    
-  end
-  
-  # add a message to the queue to send to the server
-  def add_to_message_queue(msg_type, obj)
-    @messages << "#{msg_type}|#{obj.uuid}|#{obj.type}|#{obj.sprite_image}|#{obj.player}|#{obj.x}|#{obj.y}|#{obj.angle}|#{obj.points}|#{obj.color}"
-  end
-
-  def add_shot(shot)
-    @me_shots << shot
-    add_to_message_queue('obj', shot)
-  end
-
-  def move_tank
-    @me.go(:left) and @me.accelerate and return if button_down? KbLeft
-    @me.go(:right) and @me.accelerate and return if button_down? KbRight      
-    @me.go(:up) and @me.accelerate and return if button_down? KbUp
-    @me.go(:down) and @me.accelerate and return if button_down? KbDown    
   end
 
   def update
@@ -101,18 +74,14 @@ class GameWindow < Window
       add_to_message_queue('obj', @me)    
 
       # move other people's shots, see if it hits me
-      @other_shots.each do |player, shots|
-        if @me.alive? 
-          shots.each_value do |shot|
-            if @me.collide_with?(shot, 16)
-              @me.hit       
-              add_to_message_queue('obj', @me)     
-            end
-          end
-        end          
+      @other_shots.each_value do |shot|
+        if @me.alive? and @me.collide_with?(shot, 16)
+          @me.hit       
+          add_to_message_queue('obj', @me)     
+        end
       end
       
-      # move my shots and what happens when they move
+      # move my shots 
       @me_shots.each do |shot|
         shot.move # move the bullet
         if shot.hit_wall? or shot.outside_battlefield?
@@ -134,7 +103,7 @@ class GameWindow < Window
         # create sprites or alter existing sprites from messages from the server
         data.each do |row|
           sprite = row.split("|")
-          if sprite.size == 9
+          if sprite.size == 9 # make sure we have the complete sprite
             player = sprite[3]
             @valid_sprites << sprite[0]
             case sprite[1]          
@@ -152,11 +121,8 @@ class GameWindow < Window
           
             when 'shot'
               unless player == @player
-                if !@other_shots[player]
-                  @other_shots[player] = Hash.new
-                end
                 shot = Shot.from_sprite(self, sprite)
-                @other_shots[player][shot.uuid] = shot
+                @other_shots[shot.uuid] = shot
                 shot.warp_to(sprite[4], sprite[5], sprite[6])                
               end
             end
@@ -164,39 +130,59 @@ class GameWindow < Window
         end
 
         # remove other sprites not coming from the server
-        @other_shots.each_value do |shots|
-          shots.delete_if do |uuid, shot|
-            !@valid_sprites.include?(uuid)
-          end
+        @other_shots.delete_if do |uuid, shot|
+          !@valid_sprites.include?(uuid)
         end
-
         @other_tanks.delete_if do |user, tank|
           !@valid_sprites.include?(tank.uuid)
         end
-
       end
     rescue Exception => e
       puts e.backtrace
     end
+  end
 
+  def move_tank
+    @me.go(:left) and @me.accelerate and return if button_down? KbLeft
+    @me.go(:right) and @me.accelerate and return if button_down? KbRight      
+    @me.go(:up) and @me.accelerate and return if button_down? KbUp
+    @me.go(:down) and @me.accelerate and return if button_down? KbDown    
   end
 
   def draw
     @map.draw
     @me.draw
     @me_shots.each {|shot| shot.draw}
+    @other_tanks.each_value {|tank| tank.draw}
+    @other_shots.each_value {|shot| shot.draw}
     draw_player_names
     draw_you_lose unless @me.alive?
     draw_error_message if $error_message
-    @other_tanks.each_value {|tank| tank.draw}
-    @other_shots.each_value do|shots| 
-      shots.each_value {|shot| shot.draw}
-    end
   end
 
   def button_down(id)
     @me.shoot if button_down? KbSpace
     close if id == KbEscape
+  end
+
+
+  def spawn(player, color)
+    # randomly assign a position to start
+    px, py = *random_position
+    while @map.solid?(px+16, py+16) or @map.solid?(px-16, py-16) or @map.solid?(px+16, py-16) or @map.solid?(px-16, py+16) do
+      px, py = *random_position
+    end  
+    Tank.new(self, SpriteImage::Tank, player, px, py, 0.0, DEFAULT_HIT_POINTS, color) # create tank representing the player
+  end
+  
+  # add a message to the queue to send to the server
+  def add_to_message_queue(msg_type, sprite)
+    @messages << "#{msg_type}|#{sprite.uuid}|#{sprite.type}|#{sprite.sprite_image}|#{sprite.player}|#{sprite.x}|#{sprite.y}|#{sprite.angle}|#{sprite.points}|#{sprite.color}"
+  end
+
+  def add_shot(shot)
+    @me_shots << shot
+    add_to_message_queue('obj', shot)
   end
 
   def draw_player_names
