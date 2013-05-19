@@ -1,3 +1,5 @@
+require './colors'
+
 WIDTH       = 640
 HEIGHT      = 480
 
@@ -14,12 +16,6 @@ NAME        = "Tanks!"
 SPRITESHEET = "assets/spritesheet.png"
 MAPFILE     = "assets/map.txt"
 DEFAULT_HIT_POINTS = 10
-
-COLORS = {'red'     => Gosu::Color::BLUE.gl,
-          'green'   => Gosu::Color::GREEN.gl,
-          'blue'    => 0xff00060FF,
-          'purple'  => 0xff6000C3}
-
 
 SERVER = '0.0.0.0'
 PORT        = 1234

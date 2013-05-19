@@ -1,6 +1,6 @@
 require 'gosu'
 require 'celluloid/io'
-
+require 'socket'
 require 'securerandom'
 require './settings'
 require './map'
