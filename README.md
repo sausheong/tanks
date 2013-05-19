@@ -24,13 +24,7 @@ Just do this:
 
     `$ ruby ./player.rb  <server> <port> <player name> <tank color>`
       
- All the parameters are optional. By default, a random name is used, along with a random color. The default server IP is 0.0.0.0 and the default port is 1234.
- 
- For tank colors, chose one of the following:
- * red
- * blue
- * green
- * purple
+ All the parameters are optional. By default, a random name is used, along with a random color. The default server IP is 0.0.0.0 and the default port is 1234. Tank colors can be any [X11 color names](http://en.wikipedia.org/wiki/Web_colors) in snake case e.g. `yellow_green`, `light_steel_blue` and so on. 
    
 ## Customize
 
