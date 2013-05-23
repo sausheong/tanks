@@ -2,6 +2,7 @@ require 'celluloid/io'
 
 class Arena
   include Celluloid::IO
+  finalizer :shutdown
 
   def initialize(host, port)
     puts "Starting Tanks Arena at #{host}:#{port}."
@@ -11,7 +12,7 @@ class Arena
     async.run
   end
 
-  def finalizer
+  def shutdown
     @server.close if @server
   end
 
@@ -55,6 +56,7 @@ class Arena
     player = @players[user]
     puts "#{player[3]} has left arena."
     @sprites.delete player[0]
+    @players.delete user    
     socket.close
   end
 end
