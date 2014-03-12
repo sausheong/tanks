@@ -1,0 +1,193 @@
+# Logfile created on 2014-03-11 22:11:44 +0000 by logger.rb/31641
+I, [2014-03-11T22:11:44.553566 #9219]  INFO -- : 0:  timers (1.1.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/timers-1.1.0.gemspec
+I, [2014-03-11T22:11:44.984109 #9219]  INFO -- : 0:  celluloid (0.13.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-0.13.0.gemspec
+I, [2014-03-11T22:11:46.570789 #9219]  INFO -- : 0:  nio4r (0.4.3) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/nio4r-0.4.3.gemspec
+I, [2014-03-11T22:11:46.910522 #9219]  INFO -- : 0:  celluloid-io (0.13.1) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-io-0.13.1.gemspec
+E, [2014-03-11T22:11:50.471811 #9219] ERROR -- : Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension.
+
+        /Users/sauchang/.rbenv/versions/1.9.3-p484/bin/ruby extconf.rb 
+The Gosu gem requires some libraries to be installed system-wide.
+See the following site for a list:
+https://github.com/jlnr/gosu/wiki/Getting-Started-on-Linux
+
+creating Makefile
+
+make
+compiling analysis.c
+compiling bitrate.c
+compiling bitwise.c
+compiling block.c
+compiling codebook.c
+codebook.c:251:31: warning: operator '>>' has lower precedence than '+'; '+' will be evaluated first [-Wshift-op-parentheses]
+      if((quantvals*s->q_quant+7>>3)>opb->storage-oggpack_bytes(opb))
+          ~~~~~~~~~~~~~~~~~~~~^~~~
+codebook.c:251:31: note: place parentheses around the '+' expression to silence this warning
+      if((quantvals*s->q_quant+7>>3)>opb->storage-oggpack_bytes(opb))
+                              ^
+          (                     )
+1 warning generated.
+compiling envelope.c
+compiling floor0.c
+compiling floor1.c
+compiling framing.c
+compiling info.c
+compiling lookup.c
+compiling lpc.c
+compiling lsp.c
+compiling mapping0.c
+compiling mdct.c
+compiling psy.c
+psy.c:1164:17: warning: '/*' within block comment [-Wcomment]
+                /* elliptical 
+                ^
+1 warning generated.
+compiling registry.c
+compiling res0.c
+compiling sharedbook.c
+compiling smallft.c
+compiling synthesis.c
+compiling vorbisfile.c
+compiling window.c
+compiling RubyGosu_wrap.cxx
+In file included from RubyGosu_wrap.cxx:2227:
+In file included from ../Gosu/Gosu.hpp:13:
+In file included from ../Gosu/Audio.hpp:16:
+../Gosu/TR1.hpp:27:24: error: no member named 'bind' in namespace 'std'
+            using std::bind;
+                  ~~~~~^
+In file included from RubyGosu_wrap.cxx:2227:
+In file included from ../Gosu/Gosu.hpp:13:
+../Gosu/Audio.hpp:24:5: warning: attribute '__deprecated__' is ignored, place it after "class" to apply attribute to type declaration [-Wignored-attributes]
+    GOSU_DEPRECATED class Audio;
+    ^
+../Gosu/Platform.hpp:68:42: note: expanded from macro 'GOSU_DEPRECATED'
+# define GOSU_DEPRECATED  __attribute__((__deprecated__))
+                                         ^
+In file included from RubyGosu_wrap.cxx:2227:
+In file included from ../Gosu/Gosu.hpp:26:
+../Gosu/Sockets.hpp:68:27: error: implicit instantiation of undefined template 'std::__1::function<void (unsigned int, unsigned short, const void *, unsigned long)>'
+            std::size_t)> onReceive;
+                          ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/c++/v1/__functional_03:205:44: note: template is declared here
+template<class _Fp> class _LIBCPP_TYPE_VIS function; // undefined
+                                           ^
+RubyGosu_wrap.cxx:2805:47: error: no member named 'bind' in namespace 'std::tr1'
+        self->graphics().scheduleGL(std::tr1::bind(callRubyBlock, rb_block_proc()), z);
+                                    ~~~~~~~~~~^
+RubyGosu_wrap.cxx:5780:35: warning: 'drawRot' is deprecated [-Wdeprecated-declarations]
+      ((Gosu::Font const *)arg1)->drawRot((std::wstring const &)*arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10);
+                                  ^
+../Gosu/Font.hpp:77:14: note: 'drawRot' declared here
+        void drawRot(const std::wstring& text, double x, double y, ZPos z, double angle,
+             ^
+2 warnings and 3 errors generated.
+make: *** [RubyGosu_wrap.o] Error 1
+
+
+Gem files will remain installed in /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/gosu-0.7.47.1 for inspection.
+Results logged to /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/gosu-0.7.47.1/linux/gem_make.out
+
+/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:562:in `rescue in block in build_extensions'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:540:in `block in build_extensions'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:515:in `each'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:515:in `build_extensions'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:180:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/source/rubygems.rb:95:in `block in install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/rubygems_integration.rb:118:in `preserve_paths'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/source/rubygems.rb:94:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:111:in `block in install_gem_from_spec'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/rubygems_integration.rb:150:in `with_build_args'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:110:in `install_gem_from_spec'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:295:in `block in install_sequentially'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/forwardable.rb:201:in `each'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/forwardable.rb:201:in `each'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:294:in `install_sequentially'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:97:in `run'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:15:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/cli.rb:257:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor/command.rb:27:in `run'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor/invocation.rb:120:in `invoke_command'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor.rb:363:in `dispatch'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor/base.rb:438:in `start'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/cli.rb:10:in `start'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/bin/bundle:22:in `block in <top (required)>'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/friendly_errors.rb:5:in `with_friendly_errors'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/bin/bundle:22:in `<top (required)>'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/bin/bundle:23:in `load'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/bin/bundle:23:in `<main>'
+I, [2014-03-11T22:14:06.137223 #9978]  INFO -- : 0:  timers (1.1.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/timers-1.1.0.gemspec
+I, [2014-03-11T22:14:06.137554 #9978]  INFO -- : 0:  celluloid (0.13.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-0.13.0.gemspec
+I, [2014-03-11T22:14:06.137848 #9978]  INFO -- : 0:  nio4r (0.4.3) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/nio4r-0.4.3.gemspec
+I, [2014-03-11T22:14:06.138119 #9978]  INFO -- : 0:  celluloid-io (0.13.1) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-io-0.13.1.gemspec
+E, [2014-03-11T22:14:08.840681 #9978] ERROR -- : Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension.
+
+        /Users/sauchang/.rbenv/versions/1.9.3-p484/bin/ruby extconf.rb 
+The Gosu gem requires some libraries to be installed system-wide.
+See the following site for a list:
+https://github.com/jlnr/gosu/wiki/Getting-Started-on-Linux
+
+creating Makefile
+
+make
+compiling analysis.c
+compiling bitrate.c
+compiling bitwise.c
+compiling block.c
+compiling codebook.c
+codebook.c:251:31: warning: operator '>>' has lower precedence than '+'; '+' will be evaluated first [-Wshift-op-parentheses]
+      if((quantvals*s->q_quant+7>>3)>opb->storage-oggpack_bytes(opb))
+          ~~~~~~~~~~~~~~~~~~~~^~~~
+codebook.c:251:31: note: place parentheses around the '+' expression to silence this warning
+      if((quantvals*s->q_quant+7>>3)>opb->storage-oggpack_bytes(opb))
+                              ^
+          (                     )
+1 warning generated.
+compiling envelope.c
+compiling floor0.c
+compiling floor1.c
+compiling framing.c
+compiling info.c
+compiling lookup.c
+compiling lpc.c
+compiling lsp.c
+compiling mapping0.c
+compiling mdct.c
+compiling psy.c
+psy.c:1164:17: warning: '/*' within block comment [-Wcomment]
+                /* elliptical 
+                ^
+1 warning generated.
+compiling registry.c
+compiling res0.c
+compiling sharedbook.c
+compiling smallft.c
+compiling synthesis.c
+compiling vorbisfile.c
+compiling window.c
+compiling RubyGosu_wrap.cxx
+In file included from RubyGosu_wrap.cxx:2227:
+In file included from ../Gosu/Gosu.hpp:13:
+In file included from ../Gosu/Audio.hpp:16:
+../Gosu/TR1.hpp:27:24: error: no member named 'bind' in namespace 'std'
+            using std::bind;
+                  ~~~~~^
+In file included from RubyGosu_wrap.cxx:2227:
+In file included from ../Gosu/Gosu.hpp:13:
+../Gosu/Audio.hpp:24:5: warning: attribute '__deprecated__' is ignored, place it after "class" to apply attribute to type declaration [-Wignored-attributes]
+    GOSU_DEPRECATED class Audio;
+    ^
+../Gosu/Platform.hpp:68:42: note: expanded from macro 'GOSU_DEPRECATED'
+# define GOSU_DEPRECATED  __attribute__((__deprecated__))
+                                         ^
+In file included from RubyGosu_wrap.cxx:2227:
+In file included from ../Gosu/Gosu.hpp:26:
+../Gosu/Sockets.hpp:68:27: error: implicit instantiation of undefined template 'std::__1::function<void (unsigned int, unsigned short, const void *, unsigned long)>'
+            std::size_t)> onReceive;
+                          ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/c++/v1/__functional_03:205:44: note: template is declared here
+template<class _Fp> class _LIBCPP_TYPE_VIS function; // undefined
+                                           ^
+RubyGosu_wrap.cxx:2805:47: error: no member named 'bind' in namespace 'std::tr1'
+        self->graphics().scheduleGL(std::tr1::bind(callRubyBlock, rb_block_proc()), z);
+                                    ~~~~~~~~~~^
+RubyGosu_wrap.cxx:5780:35: warning: 'drawRot' is deprecated [-Wdeprecated-declarations]
+      ((Gosu::Font const *)arg1)->drawRot((std::wstring const &)*arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10);
+                                  ^
+../Gosu/Font.hpp:77:14: note: 'drawRot' declared here
+        void drawRot(const std::wstring& text, double x, double y, ZPos z, double angle,
+             ^
+2 warnings and 3 errors generated.
+make: *** [RubyGosu_wrap.o] Error 1
+
+
+Gem files will remain installed in /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/gosu-0.7.47.1 for inspection.
+Results logged to /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/gosu-0.7.47.1/linux/gem_make.out
+
+/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:562:in `rescue in block in build_extensions'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:540:in `block in build_extensions'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:515:in `each'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:515:in `build_extensions'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/rubygems/installer.rb:180:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/source/rubygems.rb:95:in `block in install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/rubygems_integration.rb:118:in `preserve_paths'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/source/rubygems.rb:94:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:111:in `block in install_gem_from_spec'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/rubygems_integration.rb:150:in `with_build_args'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:110:in `install_gem_from_spec'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:295:in `block in install_sequentially'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/forwardable.rb:201:in `each'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/1.9.1/forwardable.rb:201:in `each'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:294:in `install_sequentially'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:97:in `run'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/installer.rb:15:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/cli.rb:257:in `install'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor/command.rb:27:in `run'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor/invocation.rb:120:in `invoke_command'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor.rb:363:in `dispatch'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/vendor/thor/base.rb:438:in `start'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/cli.rb:10:in `start'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/bin/bundle:22:in `block in <top (required)>'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/lib/bundler/friendly_errors.rb:5:in `with_friendly_errors'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/gems/bundler-1.5.1/bin/bundle:22:in `<top (required)>'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/bin/bundle:23:in `load'  \n/Users/sauchang/.rbenv/versions/1.9.3-p484/bin/bundle:23:in `<main>'
+I, [2014-03-11T22:14:39.731392 #10524]  INFO -- : 0:  timers (1.1.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/timers-1.1.0.gemspec
+I, [2014-03-11T22:14:39.731775 #10524]  INFO -- : 0:  celluloid (0.13.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-0.13.0.gemspec
+I, [2014-03-11T22:14:39.732029 #10524]  INFO -- : 0:  nio4r (0.4.3) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/nio4r-0.4.3.gemspec
+I, [2014-03-11T22:14:39.732630 #10524]  INFO -- : 0:  celluloid-io (0.13.1) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-io-0.13.1.gemspec
+I, [2014-03-11T22:14:43.624844 #10524]  INFO -- : 0:  gosu (0.7.45) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/gosu-0.7.45-universal-darwin.gemspec
+I, [2014-03-11T22:14:44.091790 #10524]  INFO -- : 0:  randexp (0.1.7) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/randexp-0.1.7.gemspec
+I, [2014-03-11T22:14:44.092197 #10524]  INFO -- : 0:  bundler (1.5.1) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/bundler-1.5.1.gemspec
+I, [2014-03-12T16:48:22.947242 #14087]  INFO -- : 0:  timers (1.1.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/timers-1.1.0.gemspec
+I, [2014-03-12T16:48:22.948338 #14087]  INFO -- : 0:  celluloid (0.13.0) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-0.13.0.gemspec
+I, [2014-03-12T16:48:22.948616 #14087]  INFO -- : 0:  nio4r (0.4.3) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/nio4r-0.4.3.gemspec
+I, [2014-03-12T16:48:22.948881 #14087]  INFO -- : 0:  celluloid-io (0.13.1) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/celluloid-io-0.13.1.gemspec
+I, [2014-03-12T16:48:22.949157 #14087]  INFO -- : 0:  gosu (0.7.45) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/gosu-0.7.45-universal-darwin.gemspec
+I, [2014-03-12T16:48:22.949415 #14087]  INFO -- : 0:  randexp (0.1.7) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/randexp-0.1.7.gemspec
+I, [2014-03-12T16:48:22.949652 #14087]  INFO -- : 0:  bundler (1.5.1) from /Users/sauchang/.rbenv/versions/1.9.3-p484/lib/ruby/gems/1.9.1/specifications/bundler-1.5.1.gemspec

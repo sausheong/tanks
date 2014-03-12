@@ -6,7 +6,7 @@ GEM
     celluloid-io (0.13.1)
       celluloid (>= 0.13.0)
       nio4r (>= 0.4.0)
-    gosu (0.7.47.1)
+    gosu (0.7.45)
     nio4r (0.4.3)
     randexp (0.1.7)
     timers (1.1.0)
@@ -15,6 +15,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  celluloid-io (~> 0.13.1)
-  gosu (~> 0.7.45)
+  celluloid-io (= 0.13.1)
+  gosu (= 0.7.45)
   randexp
